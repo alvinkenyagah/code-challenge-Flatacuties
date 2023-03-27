@@ -1,4 +1,3 @@
-
 let currentVotes = 0;
 
 function init() {
@@ -63,14 +62,30 @@ function updateVoteCount(votecount, form) {
 
 function updateVoteCountOnServer(currentVotes) {
   const name = document.querySelector("#name").textContent;
+  
+
+  if (typeof currentVotes !== "number" || currentVotes < 0) {
+    console.error("Invalid input for currentVotes");
+    return;
+  }
+  
   fetch(`http://localhost:3000/characters?name=${name}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ votes: currentVotes }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Failed to update vote count");
+    }
+  })
+  .catch(error => {
+    console.error("Error updating vote count:", error);
   });
 }
+
 
 function attachResetBtnEvents() {
   const resetBtn = document.querySelector("#reset-btn");
